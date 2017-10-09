@@ -1,0 +1,22 @@
+# Crawling results.
+/result
+
+# Code editors.
+.idea
+#vagrant
+.vagrant
+
+# Composer.
+vendor/
+composer.phar
+composer.lock
+
+# Os files.
+.DS_Store
+Desktop.ini
+._*
+Thumbs.db
+.Spotlight-V100
+.Trashes
+tmp/
+config.json

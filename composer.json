@@ -1,0 +1,34 @@
+{
+    "name": "adci/full-name-parser",
+    "description": "Parses a human name",
+    "license": "MIT",
+    "type": "library",
+    "keywords": [
+        "PHP",
+        "parse",
+        "parser",
+        "name",
+        "full name"
+    ],
+    "authors": [
+        {
+            "name": "ADCI Solutions",
+            "homepage": "https://www.adcisolutions.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/adci/full-name-parser/issues",
+        "source": "https://github.com/adci/full-name-parser"
+    },
+    "require": {
+        "php": ">=5.6"
+    },
+    "require-dev": {
+        "phpunit/phpunit": ">=4.8.28 <5"
+    },
+    "autoload": {
+        "psr-4": {
+            "ADCI\\FullNameParser\\": "src/"
+        }
+    }
+}

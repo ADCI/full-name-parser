@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<phpunit
+    colors="true"
+    bootstrap="tests/bootstrap.php">
+    <testsuites>
+        <testsuite name="Full Name Parser tests">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+    <!-- Filter for coverage reports. -->
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./src</directory>
+            <!-- By definition test classes have no tests. -->
+            <exclude>
+                <directory suffix="Test.php">./src</directory>
+                <directory suffix="TestBase.php">./src</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>
