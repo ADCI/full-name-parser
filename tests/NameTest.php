@@ -53,6 +53,7 @@ class NameTest extends TestCase
 
     /**
      * Simple parsing test.
+     *
      * @coversDefaultClass
      */
     public function testSimple()
@@ -202,21 +203,20 @@ class NameTest extends TestCase
     public function testNameList()
     {
         foreach (self::NAMES as $nameStr) {
-            $nameArr = (array)$nameStr[0];
-            foreach ($nameArr as $name) {
+            foreach ((array)$nameStr['original'] as $name) {
                 $nameObject = $this->parser->parse($name);
-                $error_msg = sprintf(self::OUTPUT_STR, "leading initial", $nameStr[1][0], $name);
-                $this->assertEquals($nameStr[1][0], $nameObject->getLeadingInitial(), $error_msg);
-                $error_msg = sprintf(self::OUTPUT_STR, "first name", $nameStr[1][1], $name);
-                $this->assertEquals($nameStr[1][1], $nameObject->getFirstName(), $error_msg);
-                $error_msg = sprintf(self::OUTPUT_STR, "nickname", $nameStr[1][2], $name);
-                $this->assertEquals($nameStr[1][2], $nameObject->getNickNames(), $error_msg);
-                $error_msg = sprintf(self::OUTPUT_STR, "middle name", $nameStr[1][3], $name);
-                $this->assertEquals($nameStr[1][3], $nameObject->getMiddleName(), $error_msg);
-                $error_msg = sprintf(self::OUTPUT_STR, "last name", $nameStr[1][4], $name);
-                $this->assertEquals($nameStr[1][4], $nameObject->getLastName(), $error_msg);
-                $error_msg = sprintf(self::OUTPUT_STR, "suffix", $nameStr[1][5], $name);
-                $this->assertEquals($nameStr[1][5], $nameObject->getSuffix(), $error_msg);
+                $error_msg = sprintf(self::OUTPUT_STR, "leading initial", $nameStr['leading'], $name);
+                $this->assertEquals($nameStr['leading'], $nameObject->getLeadingInitial(), $error_msg);
+                $error_msg = sprintf(self::OUTPUT_STR, "first name", $nameStr['first'], $name);
+                $this->assertEquals($nameStr['first'], $nameObject->getFirstName(), $error_msg);
+                $error_msg = sprintf(self::OUTPUT_STR, "nickname", $nameStr['nick'], $name);
+                $this->assertEquals($nameStr['nick'], $nameObject->getNickNames(), $error_msg);
+                $error_msg = sprintf(self::OUTPUT_STR, "middle name", $nameStr['middle'], $name);
+                $this->assertEquals($nameStr['middle'], $nameObject->getMiddleName(), $error_msg);
+                $error_msg = sprintf(self::OUTPUT_STR, "last name", $nameStr['last'], $name);
+                $this->assertEquals($nameStr['last'], $nameObject->getLastName(), $error_msg);
+                $error_msg = sprintf(self::OUTPUT_STR, "suffix", $nameStr['suffix'], $name);
+                $this->assertEquals($nameStr['suffix'], $nameObject->getSuffix(), $error_msg);
             }
         }
     }
@@ -227,60 +227,244 @@ class NameTest extends TestCase
      * @var array
      */
     const NAMES = [
-      [
-        ['Björn O\'Malley', 'O\'Malley, Björn'],
-        ['', 'Björn', '', '', 'O\'Malley', ''],
-      ],
-      ['Bin Lin', ['', 'Bin', '', '', 'Lin', '']],
-      ['Linda Jones', ['', 'Linda', '', '', 'Jones', '']],
-      ['Jason H. Priem', ['', 'Jason', '', 'H.', 'Priem', '']],
-      ['Björn O\'Malley-Muñoz', ['', 'Björn', '', '', 'O\'Malley-Muñoz', '']],
-      ['Björn C. O\'Malley', ['', 'Björn', '', 'C.', 'O\'Malley', '']],
-      [
         [
-          'Björn "Bill" O\'Malley',
-          'Björn ("Bill") O\'Malley',
-          'Björn (Bill) O\'Malley',
-          'Björn \'Bill\' O\'Malley',
+            'original' => ['Björn O\'Malley', 'O\'Malley, Björn'],
+            'leading' => '',
+            'first' => 'Björn',
+            'nick' => '',
+            'middle' => '',
+            'last' => 'O\'Malley',
+            'suffix' => '',
         ],
-        ['', 'Björn', 'Bill', '', 'O\'Malley', ''],
-      ],
-      [
-        'Björn ("Wild Bill") O\'Malley',
-        ['', 'Björn', 'Wild Bill', '', 'O\'Malley', ''],
-      ],
-      ['Björn C O\'Malley', ['', 'Björn', '', 'C', 'O\'Malley', '']],
-      ['Björn C. R. O\'Malley', ['', 'Björn', '', 'C. R.', 'O\'Malley', '']],
-      ['Björn Charles O\'Malley', ['', 'Björn', '', 'Charles', 'O\'Malley', '']],
-      [
-        'Björn Charles R. O\'Malley',
-        ['', 'Björn', '', 'Charles R.', 'O\'Malley', ''],
-      ],
-      ['Björn van O\'Malley', ['', 'Björn', '', '', 'van O\'Malley', '']],
-      [
-        'Björn Charles van der O\'Malley',
-        ['', 'Björn', '', 'Charles', 'van der O\'Malley', ''],
-      ],
-      [
-        'Björn Charles O\'Malley y Muñoz',
-        ['', 'Björn', '', 'Charles', 'O\'Malley y Muñoz', ''],
-      ],
-      ['Björn O\'Malley, Jr.', ['', 'Björn', '', '', 'O\'Malley', 'Jr.']],
-      [
-        ['Björn O\'Malley Jr', 'O\'Malley, Björn Jr'],
-        ['', 'Björn', '', '', 'O\'Malley', 'Jr'],
-      ],
-      ['B O\'Malley', ['', 'B', '', '', 'O\'Malley', '']],
-      ['William Carlos Williams', ['', 'William', '', 'Carlos', 'Williams', '']],
-      ['C. Björn Roger O\'Malley', ['C.', 'Björn', '', 'Roger', 'O\'Malley', '']],
-      ['B. C. O\'Malley', ['', 'B.', '', 'C.', 'O\'Malley', '']],
-      ['B C O\'Malley', ['', 'B', '', 'C', 'O\'Malley', '']],
-      ['B.J. Thomas', ['', 'B.J.', '', '', 'Thomas', '']],
-      ['O\'Malley, C. Björn', ['C.', 'Björn', '', '', 'O\'Malley', '']],
-      ['O\'Malley, C. Björn III', ['C.', 'Björn', '', '', 'O\'Malley', 'III']],
-      [
-        'O\'Malley y Muñoz, C. Björn Roger III',
-        ['C.', 'Björn', '', 'Roger', 'O\'Malley y Muñoz', 'III'],
-      ],
+        [
+            'original' => 'Bin Lin',
+            'leading' => '',
+            'first' => 'Bin',
+            'nick' => '',
+            'middle' => '',
+            'last' => 'Lin',
+            'suffix' => '',
+        ],
+        [
+            'original' => 'Linda Jones',
+            'leading' => '',
+            'first' => 'Linda',
+            'nick' => '',
+            'middle' => '',
+            'last' => 'Jones',
+            'suffix' => '',
+        ],
+        [
+            'original' => 'Jason H. Priem',
+            'leading' => '',
+            'first' => 'Jason',
+            'nick' => '',
+            'middle' => 'H.',
+            'last' => 'Priem',
+            'suffix' => '',
+        ],
+        [
+            'original' => 'Björn O\'Malley-Muñoz',
+            'leading' => '',
+            'first' => 'Björn',
+            'nick' => '',
+            'middle' => '',
+            'last' => 'O\'Malley-Muñoz',
+            'suffix' => '',
+        ],
+        [
+            'original' => 'Björn C. O\'Malley',
+            'leading' => '',
+            'first' => 'Björn',
+            'nick' => '',
+            'middle' => 'C.',
+            'last' => 'O\'Malley',
+            'suffix' => '',
+        ],
+        [
+            'original' => [
+                'Björn "Bill" O\'Malley',
+                'Björn ("Bill") O\'Malley',
+                'Björn (Bill) O\'Malley',
+                'Björn \'Bill\' O\'Malley',
+            ],
+            'leading' => '',
+            'first' => 'Björn',
+            'nick' => 'Bill',
+            'middle' => '',
+            'last' => 'O\'Malley',
+            'suffix' => '',
+        ],
+        [
+            'original' => 'Björn ("Wild Bill") O\'Malley',
+            'leading' => '',
+            'first' => 'Björn',
+            'nick' => 'Wild Bill',
+            'middle' => '',
+            'last' => 'O\'Malley',
+            'suffix' => '',
+        ],
+        [
+            'original' => 'Björn C O\'Malley',
+            'leading' => '',
+            'first' => 'Björn',
+            'nick' => '',
+            'middle' => 'C',
+            'last' => 'O\'Malley',
+            'suffix' => '',
+        ],
+        [
+            'original' => 'Björn C. R. O\'Malley',
+            'leading' => '',
+            'first' => 'Björn',
+            'nick' => '',
+            'middle' => 'C. R.',
+            'last' => 'O\'Malley',
+            'suffix' => '',
+        ],
+        [
+            'original' => 'Björn Charles O\'Malley',
+            'leading' => '',
+            'first' => 'Björn',
+            'nick' => '',
+            'middle' => 'Charles',
+            'last' => 'O\'Malley',
+            'suffix' => '',
+        ],
+        [
+            'original' => 'Björn Charles R. O\'Malley',
+            'leading' => '',
+            'first' => 'Björn',
+            'nick' => '',
+            'middle' => 'Charles R.',
+            'last' => 'O\'Malley',
+            'suffix' => '',
+        ],
+        [
+            'original' => 'Björn van O\'Malley',
+            'leading' => '',
+            'first' => 'Björn',
+            'nick' => '',
+            'middle' => '',
+            'last' => 'van O\'Malley',
+            'suffix' => '',
+        ],
+        [
+            'original' => 'Björn Charles van der O\'Malley',
+            'leading' => '',
+            'first' => 'Björn',
+            'nick' => '',
+            'middle' => 'Charles',
+            'last' => 'van der O\'Malley',
+            'suffix' => '',
+        ],
+        [
+            'original' => 'Björn Charles O\'Malley y Muñoz',
+            'leading' => '',
+            'first' => 'Björn',
+            'nick' => '',
+            'middle' => 'Charles',
+            'last' => 'O\'Malley y Muñoz',
+            'suffix' => '',
+        ],
+        [
+            'original' => 'Björn O\'Malley, Jr.',
+            'leading' => '',
+            'first' => 'Björn',
+            'nick' => '',
+            'middle' => '',
+            'last' => 'O\'Malley',
+            'suffix' => 'Jr.',
+        ],
+        [
+            'original' => ['Björn O\'Malley Jr', 'O\'Malley, Björn Jr'],
+            'leading' => '',
+            'first' => 'Björn',
+            'nick' => '',
+            'middle' => '',
+            'last' => 'O\'Malley',
+            'suffix' => 'Jr',
+        ],
+        [
+            'original' => 'B O\'Malley',
+            'leading' => '',
+            'first' => 'B',
+            'nick' => '',
+            'middle' => '',
+            'last' => 'O\'Malley',
+            'suffix' => '',
+        ],
+        [
+            'original' => 'William Carlos Williams',
+            'leading' => '',
+            'first' => 'William',
+            'nick' => '',
+            'middle' => 'Carlos',
+            'last' => 'Williams',
+            'suffix' => '',
+        ],
+        [
+            'original' => 'C. Björn Roger O\'Malley',
+            'leading' => 'C.',
+            'first' => 'Björn',
+            'nick' => '',
+            'middle' => 'Roger',
+            'last' => 'O\'Malley',
+            'suffix' => '',
+        ],
+        [
+            'original' => 'B. C. O\'Malley',
+            'leading' => '',
+            'first' => 'B.',
+            'nick' => '',
+            'middle' => 'C.',
+            'last' => 'O\'Malley',
+            'suffix' => '',
+        ],
+        [
+            'original' => 'B C O\'Malley',
+            'leading' => '',
+            'first' => 'B',
+            'nick' => '',
+            'middle' => 'C',
+            'last' => 'O\'Malley',
+            'suffix' => '',
+        ],
+        [
+            'original' => 'B.J. Thomas',
+            'leading' => '',
+            'first' => 'B.J.',
+            'nick' => '',
+            'middle' => '',
+            'last' => 'Thomas',
+            'suffix' => '',
+        ],
+        [
+            'original' => 'O\'Malley, C. Björn',
+            'leading' => 'C.',
+            'first' => 'Björn',
+            'nick' => '',
+            'middle' => '',
+            'last' => 'O\'Malley',
+            'suffix' => '',
+        ],
+        [
+            'original' => 'O\'Malley, C. Björn III',
+            'leading' => 'C.',
+            'first' => 'Björn',
+            'nick' => '',
+            'middle' => '',
+            'last' => 'O\'Malley',
+            'suffix' => 'III',
+        ],
+        [
+            'original' => 'O\'Malley y Muñoz, C. Björn Roger III',
+            'leading' => 'C.',
+            'first' => 'Björn',
+            'nick' => '',
+            'middle' => 'Roger',
+            'last' => 'O\'Malley y Muñoz',
+            'suffix' => 'III',
+        ],
     ];
 }

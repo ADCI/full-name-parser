@@ -39,21 +39,29 @@ class Parser
 
     /**
      * Regex for titles.
+     * Each title gets a "\.*" behind it.
+     * It cannot be the last word in name.
      *
      * @var string
      */
-    const REGEX_TITLES = "/(%s)\.*/";
+    const REGEX_TITLES = "/((^| )(%s)\.* )/";
 
-    // @todo Maybe it can be useful to find suffix with some regex.
-    /*const REGEX_SUFFIX = "/(%s)$/";/**/
-    /*const REGEX_SUFFIX = "/(%s) +/";/**/
+    /**
+     * Regex for suffixes.
+     * Before suffix must be start of string of space.
+     * Each suffix gets a "\.*" behind it.
+     * After it must be end of string, space or comma.
+     *
+     * @var string
+     */
+    const REGEX_SUFFIX = "/((^| )(%s)\.*($| |,))/";
 
     /**
      * Regex for last name.
      *
      * @var string
      */
-    const REGEX_LAST_NAME = "/(?!^)\b([^ ]+ y |%s)*[^ ]+$/i";
+    const REGEX_LAST_NAME = "/(?!^)\b(([^ ]+ y|%s)\.? )*[^ ]+$/i";
 
     /**
      * Regex for initials.
@@ -76,15 +84,16 @@ class Parser
      * @var array
      */
     const SUFFIXES = [
-      'esq',
-      'esquire',
-      'jr',
-      'sr',
-      '2',
-      'iii',
-      'ii',
-      'iv',
-      'phd',
+        'esq',
+        'esquire',
+        'jr',
+        'sr',
+        '2',
+        'iii',
+        'ii',
+        'iv',
+        'v',
+        'phd',
     ];
 
     /**
@@ -93,27 +102,27 @@ class Parser
      * @var array
      */
     const PREFIXES = [
-      'bar',
-      'ben',
-      'bin',
-      'da',
-      'dal',
-      'de la',
-      'de',
-      'del',
-      'der',
-      'di',
-      'ibn',
-      'la',
-      'le',
-      'san',
-      'st',
-      'ste',
-      'van der',
-      'van den',
-      'van',
-      'vel',
-      'von',
+        'bar',
+        'ben',
+        'bin',
+        'da',
+        'dal',
+        'de la',
+        'de',
+        'del',
+        'der',
+        'di',
+        'ibn',
+        'la',
+        'le',
+        'san',
+        'st',
+        'ste',
+        'van der',
+        'van den',
+        'van',
+        'vel',
+        'von',
     ];
 
     /**
@@ -122,32 +131,33 @@ class Parser
      * @var array
      */
     const FORCED_CASE = [
-      'e',
-      'y',
-      'av',
-      'af',
-      'da',
-      'dal',
-      'de',
-      'del',
-      'der',
-      'di',
-      'la',
-      'le',
-      'van',
-      'der',
-      'den',
-      'vel',
-      'von',
-      'II',
-      'III',
-      'IV',
-      'J.D.',
-      'LL.M.',
-      'M.D.',
-      'D.O.',
-      'D.C.',
-      'Ph.D.',
+        'e',
+        'y',
+        'av',
+        'af',
+        'da',
+        'dal',
+        'de',
+        'del',
+        'der',
+        'di',
+        'la',
+        'le',
+        'van',
+        'der',
+        'den',
+        'vel',
+        'von',
+        'II',
+        'III',
+        'IV',
+        'V',
+        'J.D.',
+        'LL.M.',
+        'M.D.',
+        'D.O.',
+        'D.C.',
+        'Ph.D.',
     ];
 
     /**
@@ -163,13 +173,13 @@ class Parser
      * @var array
      */
     const PARTS = [
-      'title',
-      'first',
-      'middle',
-      'last',
-      'nick',
-      'suffix',
-      'error',
+        'title',
+        'first',
+        'middle',
+        'last',
+        'nick',
+        'suffix',
+        'error',
     ];
 
     /**
@@ -242,7 +252,7 @@ class Parser
     /**
      * Object which contains parsed name parts.
      *
-     * @var \ADCI\FullNameParser\Name
+     * @var Name
      */
     private $name;
 
@@ -295,12 +305,12 @@ class Parser
     public function __construct($options = [])
     {
         $options += [
-          'suffixes' => self::SUFFIXES,
-          'prefixes' => self::PREFIXES,
-          'academic_titles' => self::TITLES,
-          'part' => self::PART,
-          'fix_case' => self::FIX_CASE,
-          'throws' => self::THROWS,
+            'suffixes' => self::SUFFIXES,
+            'prefixes' => self::PREFIXES,
+            'academic_titles' => self::TITLES,
+            'part' => self::PART,
+            'fix_case' => self::FIX_CASE,
+            'throws' => self::THROWS,
         ];
         if (array_search(strtolower($options['part']), self::PARTS) === false) {
             $options['part'] = self::PART;
@@ -326,26 +336,26 @@ class Parser
      * @param string|mixed|null $name
      * String to parse.
      *
-     * @return \ADCI\FullNameParser\Name|string $name
+     * @return Name|string $name
      * Parsed name object or part of it.
+     * @throws NameParsingException
      */
     public function parse($name)
     {
         $this->name = new Name();
         if (is_string($name)) {
-            $words = explode(' ', $name);
-            $casedName = [];
-            foreach ($words as $word) {
-                $casedName[] = $this->fixParsedNameCase($word);
+            if ($this->isFixCase()) {
+                $words = explode(' ', $name);
+                $casedName = [];
+                foreach ($words as $word) {
+                    $casedName[] = $this->fixParsedNameCase($word);
+                }
+                $name = implode(' ', $casedName);
             }
-            $name = implode(' ', $casedName);
             $this->original_name = $name;
-            // Each suffix gets a "\.*" behind it.
-            $suffixes = implode("\.*|", $this->getSuffixes()) . "\.*";
-            // Each prefix gets a " " behind it.
-            $prefixes = implode(" |", $this->getPrefixes()) . " ";
-            // Each title gets a "\.*" behind it.
-            $academicTitles = implode("\.+|", $this->getAcademicTitles()) . "\.+";
+            $suffixes = implode("|", $this->getSuffixes());
+            $prefixes = implode("|", $this->getPrefixes());
+            $academicTitles = implode("|", $this->getAcademicTitles());
 
             $this->name_token = $name;
 
@@ -369,11 +379,11 @@ class Parser
     /**
      * Throw exception if set in options.
      *
-     * @param \ADCI\FullNameParser\Exception\NameParsingException $ex
+     * @param NameParsingException $ex
      * Error to throw or add to error array.
      *
      * @return self
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
      */
     private function handleError(NameParsingException $ex)
     {
@@ -437,6 +447,7 @@ class Parser
      * Find and add nicknames to Name object.
      *
      * @return self
+     * @throws NameParsingException
      */
     private function findNicknames()
     {
@@ -457,14 +468,16 @@ class Parser
      * The suffixes to be searched for.
      *
      * @return self
+     * @throws NameParsingException
      */
     private function findSuffix($suffixes)
     {
-        $regex = "/($suffixes)/";
+        $regex = sprintf(self::REGEX_SUFFIX, $suffixes);
         $suffix = $this->findWithRegex($regex, 1);
         if ($suffix) {
             $this->name->setSuffix($suffix);
-            $this->removeTokenWithRegex($regex);
+            // Remove founded suffix.
+            $this->removeTokenWithRegex("/($suffix)/");
         }
         $extra = $this->findExtraSuffix('');
         $known = $this->name->getSuffix();
@@ -487,6 +500,7 @@ class Parser
      *
      * @return string
      * Result string of suffixes.
+     * @throws NameParsingException
      */
     private function findExtraSuffix($extra)
     {
@@ -515,6 +529,7 @@ class Parser
      * Regex to find prefixes.
      *
      * @return self
+     * @throws NameParsingException
      */
     private function findLastName($prefixes)
     {
@@ -534,6 +549,7 @@ class Parser
      * Find and add first name to Name object.
      *
      * @return self
+     * @throws NameParsingException
      */
     private function findFirstName()
     {
@@ -552,6 +568,7 @@ class Parser
      * Find and add leading initial to Name object.
      *
      * @return self
+     * @throws NameParsingException
      */
     private function findLeadingInitial()
     {
@@ -568,6 +585,7 @@ class Parser
      * Find and add middle name to Name object.
      *
      * @return self
+     * @throws NameParsingException
      */
     private function findMiddleName()
     {
@@ -600,7 +618,8 @@ class Parser
         $regex = $regex . "ui";
         preg_match($regex, $this->name_token, $match);
         $subset = (isset($match[$submatchIndex])) ? $match[$submatchIndex] : false;
-
+        // No need commas and spaces in name parts.
+        $subset = $this->normalize($subset);
         return $subset;
     }
 
@@ -611,6 +630,7 @@ class Parser
      * Regex to remove name part.
      *
      * @return self
+     * @throws NameParsingException
      */
     private function removeTokenWithRegex($regex)
     {
@@ -660,6 +680,7 @@ class Parser
      * Flip name around comma.
      *
      * @return self
+     * @throws NameParsingException
      */
     private function flipNameToken()
     {
@@ -679,6 +700,7 @@ class Parser
      *
      * @return string
      * Flipped string.
+     * @throws NameParsingException
      */
     private function flipStringPartsAround($string, $char)
     {
