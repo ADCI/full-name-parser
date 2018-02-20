@@ -104,7 +104,8 @@ mandatory_last_name(bool|integer, optional): Throw error if last name not found.
 ```php
 <?php
 use ADCI\FullNameParser\Parser;
-// some code ...
+// Some code...
+// Example with advanced options.
 $parser = new Parser(['part' => 'all', 'fix_case' => TRUE, 'throws' => FALSE]);
 $name = 'DE LORENZO Y GUTIEREZ, Mr. JÜAN MARTINEZ (MARTIN) Jr.';
 $nameObject = $parser->parse($name);
@@ -116,6 +117,14 @@ $this->assertEquals('de Lorenzo y Gutierez', $nameObject->getLastName());
 $this->assertEquals('Martin', $nameObject->getNicknames());
 $this->assertEquals('Jr.', $nameObject->getSuffix());
 $this->assertEquals([], $nameObject->getErrors());
+// Some else code...
+// And example with overriding suffixes and titles lists by short versions of lists.
+$options = [
+    'suffixes' => ['esq', 'jr', 'sr'],
+    'academic_titles' => ['ms', 'mrs', 'mr'],
+];
+$parser = new Parser($options);
+$nameObject = $parser->parse($name);
 ```
 
 ## Reporting Bugs
