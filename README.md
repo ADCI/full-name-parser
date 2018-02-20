@@ -57,26 +57,47 @@ $this->assertEquals('Davis', $nameObject->getLastName());
 
 ### Advanced options
 
-part(string, optional): the name of a single part to return
+suffixes(array of string, optional): Override list of suffixes to search.
+  These suffixes can end with dot in source name string.
+  Though you must not include dots in these suffixes, dots are handled automatically on parsing.
 
-  - 'all' (default) = return an object containing all name parts
-  - 'title' = return only the title(s) as a string (or an empty string)
-  - 'first' = return only the first name as a string (or an empty string)
-  - 'middle' = return only the middle name(s) as a string (or an empty string)
-  - 'last' = return only the last name as a string (or an empty string)
-  - 'nick' = return only the nickname(s) as a string (or an empty string)
-  - 'suffix' = return only the suffix(es) as a string (or an empty string)
-  - 'error' = return only the array of parsing error messages (or an empty array)
+numeral_suffixes(array of string, optional): Override list of numeral suffixes to search.
+  Do not contain trailing dots.
 
-fix_case (integer, optional): fix case of output name
+prefixes(array of string, optional): Override list of prefixes to search.
 
-  - 0 or false (default) = never fix the case (retain and output same case as input name)
-  - 1 or true = always fix case of output, even if input is mixed case
+academic_titles(array of string, optional): Override list of academic titles to search.
 
-throws (bool|integer, optional): makes parsing errors throw PHP errors
+part(string, optional): The name of a single part to return.
 
-  - 0 or false = return warnings about parsing errors, but continue
-  - 1 or true (default) = if a parsing error is found, throw a PHP error
+  - 'all' (default) = Return an object containing all name parts.
+  - 'title' = Return only the title(s) as a string (or an empty string).
+  - 'first' = Return only the first name as a string (or an empty string).
+  - 'middle' = Return only the middle name(s) as a string (or an empty string).
+  - 'last' = Return only the last name as a string (or an empty string).
+  - 'nick' = Return only the nickname(s) as a string (or an empty string).
+  - 'suffix' = Return only the suffix(es) as a string (or an empty string).
+  - 'error' = Return only the array of parsing error messages (or an empty array).
+
+fix_case (bool|integer, optional): Fix case of output name.
+
+  - 0 or false (default) = Never fix the case (retain and output same case as input name).
+  - 1 or true = Always fix case of output, even if input is mixed case.
+
+throws (bool|integer, optional): Makes parsing errors throw PHP errors.
+
+  - 0 or false = Return warnings about parsing errors, but continue.
+  - 1 or true (default) = If a parsing error is found, throw a PHP error.
+
+mandatory_first_name(bool|integer, optional): Throw error if first name not found.
+
+  - 0 or false = Does not throw error.
+  - 1 or true (default) = Throw error.
+
+mandatory_last_name(bool|integer, optional): Throw error if last name not found.
+
+  - 0 or false = Does not throw error.
+  - 1 or true (default) = Throw error.
 
 ### Advanced Use
 
