@@ -57,6 +57,16 @@ class Parser
     const REGEX_SUFFIX = "/((^| )(%s)\.*($| |,))/";
 
     /**
+     * Regex for numeral suffixes.
+     * Before suffix must be start of string of space.
+     * Numeral suffixes does not contain dots behind it.
+     * After it must be end of string, space or comma.
+     *
+     * @var string
+     */
+    const REGEX_NUMERAL_SUFFIX = "/((^| )(%s)($| |,))/";
+
+    /**
      * Regex for last name.
      *
      * @var string
@@ -88,12 +98,20 @@ class Parser
         'esquire',
         'jr',
         'sr',
+        'phd',
+    ];
+
+    /**
+     * List of numeral suffixes.
+     *
+     * @var array
+     */
+    const NUMERAL_SUFFIXES = [
         '2',
         'iii',
         'ii',
         'iv',
         'v',
-        'phd',
     ];
 
     /**
@@ -215,6 +233,13 @@ class Parser
     private $suffixes;
 
     /**
+     * Array of string possible numeral suffixes.
+     *
+     * @var array
+     */
+    private $numeral_suffixes;
+
+    /**
      * Array of string possible prefixes.
      *
      * @var array
@@ -306,6 +331,7 @@ class Parser
     {
         $options += [
             'suffixes' => self::SUFFIXES,
+            'numeral_suffixes' => self::NUMERAL_SUFFIXES,
             'prefixes' => self::PREFIXES,
             'academic_titles' => self::TITLES,
             'part' => self::PART,
@@ -326,6 +352,7 @@ class Parser
         $this->setFixCase($options['fix_case'] == true);
         $this->setNamePart(strtolower($options['part']));
         $this->setSuffixes($options['suffixes']);
+        $this->setNumeralSuffixes($options['numeral_suffixes']);
         $this->setPrefixes($options['prefixes']);
         $this->setAcademicTitles($options['academic_titles']);
     }
@@ -354,6 +381,7 @@ class Parser
             }
             $this->original_name = $name;
             $suffixes = implode("|", $this->getSuffixes());
+            $numeral_suffixes = implode("|", $this->getNumeralSuffixes());
             $prefixes = implode("|", $this->getPrefixes());
             $academicTitles = implode("|", $this->getAcademicTitles());
 
@@ -362,7 +390,7 @@ class Parser
             $this->findAcademicTitle($academicTitles);
             $this->findNicknames();
 
-            $this->findSuffix($suffixes);
+            $this->findSuffix($numeral_suffixes, $suffixes);
             $this->flipNameToken();
 
             $this->findLastName($prefixes);
@@ -464,20 +492,31 @@ class Parser
     /**
      * Find and add suffixes to Name object.
      *
+     * @param string $numeral_suffixes
+     * The numeral suffixes to be searched for.
      * @param string $suffixes
      * The suffixes to be searched for.
      *
      * @return self
      * @throws NameParsingException
      */
-    private function findSuffix($suffixes)
+    private function findSuffix($numeral_suffixes, $suffixes)
     {
-        $regex = sprintf(self::REGEX_SUFFIX, $suffixes);
+        $regex = sprintf(self::REGEX_NUMERAL_SUFFIX, $numeral_suffixes);
         $suffix = $this->findWithRegex($regex, 1);
         if ($suffix) {
             $this->name->setSuffix($suffix);
             // Remove founded suffix.
             $this->removeTokenWithRegex("/($suffix)/");
+        } else {
+            $regex = sprintf(self::REGEX_SUFFIX, $suffixes);
+            $suffix = $this->findWithRegex($regex, 1);
+            if ($suffix) {
+                $this->name->setSuffix($suffix);
+                // Remove founded suffix.
+                $regex_suffix = str_replace('.', '\.', $suffix);
+                $this->removeTokenWithRegex("/($regex_suffix)/");
+            }
         }
         $extra = $this->findExtraSuffix('');
         $known = $this->name->getSuffix();
@@ -514,7 +553,8 @@ class Parser
             $suffix = trim(end($explodeCommas));
             $extra = $extra === '' ? '' : ', ' . $extra;
             $extra = $suffix . $extra;
-            $regex = "/($suffix)/";
+            $regex_suffix = str_replace('.', '\.', $suffix);
+            $regex = "/($regex_suffix)/";
             $this->removeTokenWithRegex($regex);
             $extra = $this->findExtraSuffix($extra);
         }
@@ -740,6 +780,30 @@ class Parser
     public function setSuffixes($suffixes)
     {
         $this->suffixes = $suffixes;
+        return $this;
+    }
+
+    /**
+     * Numeral suffixes getter.
+     *
+     * @return array
+     */
+    public function getNumeralSuffixes()
+    {
+        return $this->numeral_suffixes;
+    }
+
+    /**
+     * Numeral suffixes setter.
+     *
+     * @param array $numeral_suffixes
+     * The numeral suffixes to set.
+     *
+     * @return self
+     */
+    public function setNumeralSuffixes($numeral_suffixes)
+    {
+        $this->numeral_suffixes = $numeral_suffixes;
         return $this;
     }
 

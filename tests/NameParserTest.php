@@ -270,7 +270,6 @@ class NameParserTest extends TestCase
             'suffix' => '',
             'errors' => ['Incorrect input to parse.'],
         ],
-
         /* @see https://github.com/ADCI/full-name-parser/issues/1 */
         [
             'original' => 'John J Oliveri',
@@ -278,6 +277,17 @@ class NameParserTest extends TestCase
             'first' => 'John',
             'middle' => 'J',
             'last' => 'Oliveri',
+            'nick' => '',
+            'suffix' => '',
+            'errors' => [],
+        ],
+        /* @see https://github.com/ADCI/full-name-parser/issues/2 */
+        [
+            'original' => 'Villuendas, M. V.',
+            'title' => '',
+            'first' => 'M.',
+            'middle' => 'V.',
+            'last' => 'Villuendas',
             'nick' => '',
             'suffix' => '',
             'errors' => [],
