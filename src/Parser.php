@@ -371,6 +371,7 @@ class Parser
     {
         $this->name = new Name();
         if (is_string($name)) {
+            $name = trim($name);
             if ($this->isFixCase()) {
                 $words = explode(' ', $name);
                 $casedName = [];
