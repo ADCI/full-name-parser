@@ -48,23 +48,14 @@ class Parser
 
     /**
      * Regex for suffixes.
-     * Before suffix must be start of string of space.
-     * Each suffix gets a "\.*" behind it.
-     * After it must be end of string, space or comma.
+     * Before suffix must be space.
+     * Each suffix gets a "\.*" behind it. Numeral suffixes does not contain dots behind it.
+     * After regular suffix can go extra suffixes - comma separated before each word to the end of string.
+     * Or there must be end of string, space or comma after regular suffix.
      *
      * @var string
      */
-    const REGEX_SUFFIX = "/((^| )(%s)\.*($| |,))/";
-
-    /**
-     * Regex for numeral suffixes.
-     * Before suffix must be start of string of space.
-     * Numeral suffixes does not contain dots behind it.
-     * After it must be end of string, space or comma.
-     *
-     * @var string
-     */
-    const REGEX_NUMERAL_SUFFIX = "/((^| )(%s)($| |,))/";
+    const REGEX_SUFFIX = "/( (((%s)\.*)|(%s))(((,+ +\S+)*$)|( |,)))/";
 
     /**
      * Regex for last name.
@@ -503,64 +494,17 @@ class Parser
      */
     private function findSuffix($numeral_suffixes, $suffixes)
     {
-        $regex = sprintf(self::REGEX_NUMERAL_SUFFIX, $numeral_suffixes);
+        $regex = sprintf(self::REGEX_SUFFIX, $suffixes, $numeral_suffixes);
         $suffix = $this->findWithRegex($regex, 1);
         if ($suffix) {
-            $this->name->setSuffix($suffix);
             // Remove founded suffix.
-            $this->removeTokenWithRegex("/($suffix)/");
-        } else {
-            $regex = sprintf(self::REGEX_SUFFIX, $suffixes);
-            $suffix = $this->findWithRegex($regex, 1);
-            if ($suffix) {
-                $this->name->setSuffix($suffix);
-                // Remove founded suffix.
-                $regex_suffix = str_replace('.', '\.', $suffix);
-                $this->removeTokenWithRegex("/($regex_suffix)/");
-            }
-        }
-        $extra = $this->findExtraSuffix('');
-        $known = $this->name->getSuffix();
-        $known .= $known ? ', ' : '';
-        if ($extra !== '') {
-            $this->name->setSuffix($known . $extra);
+            $regex_suffix = preg_quote($suffix);
+            $this->removeTokenWithRegex("/ ($regex_suffix)($| |,)/", '$2');
+
+            $this->name->setSuffix($suffix);
         }
 
         return $this;
-    }
-
-    /**
-     * Function for search extra suffixes.
-     * From the end string each additional comma separated word.
-     *
-     * @todo Refactor to regexp non-recursive function. Something like this /,+ +([^, ]+)/
-     *
-     * @param string $extra
-     * Founded suffixes.
-     *
-     * @return string
-     * Result string of suffixes.
-     * @throws NameParsingException
-     */
-    private function findExtraSuffix($extra)
-    {
-        // There's no need prefixes in suffix list.
-        // Each prefix gets a " " behind it.
-        $prefixes = '/(' . implode(" |", $this->getPrefixes()) . " )+/ui";
-        $explodeCommas = explode(',', $this->name_token);
-        $explodeSpaces = explode(' ', preg_replace($prefixes, '', trim($this->name_token)));
-        // If you have more than 1 commas and each word from the end separate commas - it is extra suffixes.
-        if (count($explodeSpaces) > 2 && trim(end($explodeCommas)) === trim(end($explodeSpaces), ',')) {
-            $suffix = trim(end($explodeCommas));
-            $extra = $extra === '' ? '' : ', ' . $extra;
-            $extra = $suffix . $extra;
-            $regex_suffix = str_replace('.', '\.', $suffix);
-            $regex = "/($regex_suffix)/";
-            $this->removeTokenWithRegex($regex);
-            $extra = $this->findExtraSuffix($extra);
-        }
-
-        return $extra;
     }
 
     /**
@@ -669,16 +613,17 @@ class Parser
      *
      * @param string $regex
      * Regex to remove name part.
+     * @param string $replacement
+     * String to replace.
      *
      * @return self
      * @throws NameParsingException
      */
-    private function removeTokenWithRegex($regex)
+    private function removeTokenWithRegex($regex, $replacement = ' ')
     {
         $numReplacements = 0;
-        $tokenRemoved = preg_replace($regex . 'ui', ' ', $this->name_token, -1, $numReplacements);
+        $tokenRemoved = preg_replace($regex . 'ui', $replacement, $this->name_token, -1, $numReplacements);
         if ($numReplacements > 1) {
-            // @todo: unused code line?
             $this->handleError(new NameParsingException("The regex being used has multiple matches."));
         }
 

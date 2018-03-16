@@ -466,5 +466,17 @@ class NameTest extends TestCase
             'last' => 'O\'Malley y Muñoz',
             'suffix' => 'III',
         ],
+        /* @see https://github.com/ADCI/full-name-parser/issues/8 */
+        [
+            'original' => 'Arantes Rodrigues, R',
+            'leading' => 'R',
+            'title' => '',
+            'first' => 'Arantes',
+            'middle' => '',
+            'last' => 'Rodrigues',
+            'nick' => '',
+            'suffix' => '',
+            'errors' => [],
+        ],
     ];
 }

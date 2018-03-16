@@ -204,6 +204,8 @@ class NameParserTest extends TestCase
             'original' => [
                 'John P. Doe-Ray, Jr., CLU, CFP, LUTC',
                 'Doe-Ray, John P., Jr., CLU, CFP, LUTC',
+                'John P. Doe-Ray Jr., CLU, CFP, LUTC',
+                'Doe-Ray, John P. Jr., CLU, CFP, LUTC',
             ],
             'title' => '',
             'first' => 'John',
@@ -292,9 +294,21 @@ class NameParserTest extends TestCase
             'suffix' => '',
             'errors' => [],
         ],
+        /* @see https://github.com/ADCI/full-name-parser/issues/6 */
+        [
+            'original' => 'Jokubas Phillip Gardner ',
+            'title' => '',
+            'first' => 'Jokubas',
+            'middle' => 'Phillip',
+            'last' => 'Gardner',
+            'nick' => '',
+            'suffix' => '',
+            'errors' => [],
+        ],
     ];
 
     // List from https://github.com/mklaber/node-another-name-parser
+    // Except not valid strings.
     const ADDITIONAL_NAMES = [
         [
             'original' => 'Doe, John',
@@ -306,17 +320,6 @@ class NameParserTest extends TestCase
             'suffix' => '',
             'errors' => [],
         ],
-        /* Not valid.
-        [
-            'original' => 'Doe, \nJohn    P\t\t  \r',
-            'title' => '',
-            'first' => 'John',
-            'middle' => 'P',
-            'last' => 'Doe',
-            'nick' => '',
-            'suffix' => '',
-            'errors' => [],
-        ],*/
         [
             'original' => 'Doe, John P',
             'title' => '',
@@ -479,18 +482,6 @@ class NameParserTest extends TestCase
             'suffix' => '',
             'errors' => [],
         ],
-        /* Not valid test.
-        [
-            'original' => 'Mr. Dr. Jane Smith',
-            'title' => 'Mr. Dr.',
-            'first' => 'Jane',
-            'middle' => '',
-            'last' => 'Smith',
-            'nick' => '',
-            'suffix' => '',
-            'errors' => [],
-        ],*/
-        // Original string 'Mr John Doe PhD Esq' not valid. Changed.
         [
             'original' => 'Mr John Doe PhD, Esq',
             'title' => 'Mr',
@@ -512,23 +503,13 @@ class NameParserTest extends TestCase
             'errors' => [],
         ],
         [
-            'original' => 'Smarty Pants PhD',
+            'original' => ['Smarty Pants PhD', 'Smarty Pants, PhD'],
             'title' => '',
             'first' => 'Smarty',
             'middle' => '',
             'last' => 'Pants',
             'nick' => '',
             'suffix' => 'PhD',
-            'errors' => [],
-        ],
-        [
-            'original' => 'Smarty Pants, Ph.D.',
-            'title' => '',
-            'first' => 'Smarty',
-            'middle' => '',
-            'last' => 'Pants',
-            'nick' => '',
-            'suffix' => 'Ph.D.',
             'errors' => [],
         ],
         [
