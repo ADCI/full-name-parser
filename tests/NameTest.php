@@ -40,6 +40,7 @@ class NameTest extends TestCase
     /**
      * Simple test on suffix parsing.
      *
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @coversDefaultClass
      */
     public function testSuffix()
@@ -54,6 +55,7 @@ class NameTest extends TestCase
     /**
      * Simple parsing test.
      *
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @coversDefaultClass
      */
     public function testSimple()
@@ -67,6 +69,7 @@ class NameTest extends TestCase
     /**
      * Simple parsing test with comma.
      *
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @coversDefaultClass
      */
     public function testReverse()
@@ -80,6 +83,7 @@ class NameTest extends TestCase
     /**
      * Simple parsing test with comma and title.
      *
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @coversDefaultClass
      */
     public function testReverseWithAcademicTitle()
@@ -94,9 +98,10 @@ class NameTest extends TestCase
     /**
      * Simple parsing test with title.
      *
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @coversDefaultClass
      */
-    public function testithAcademicTitle()
+    public function testAcademicTitle()
     {
         $name = 'Dr. Hans Meiser';
         $nameObject = $this->parser->parse($name);
@@ -108,6 +113,7 @@ class NameTest extends TestCase
     /**
      * Simple parsing test with prefix.
      *
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @coversDefaultClass
      */
     public function testLastNameWithPrefix()
@@ -122,6 +128,7 @@ class NameTest extends TestCase
      * Exception test.
      *
      * @expectedException \ADCI\FullNameParser\Exception\FirstNameNotFoundException
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @covers \ADCI\FullNameParser\Exception\FirstNameNotFoundException
      */
     public function testNoFirstNameDefaultException()
@@ -134,6 +141,7 @@ class NameTest extends TestCase
      * Exception test.
      *
      * @expectedException \ADCI\FullNameParser\Exception\LastNameNotFoundException
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @covers \ADCI\FullNameParser\Exception\LastNameNotFoundException
      */
     public function testNoLastNameDefaultException()
@@ -145,6 +153,7 @@ class NameTest extends TestCase
     /**
      * Simple last name parsing test.
      *
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @coversDefaultClass
      */
     public function testFirstNameNotMandatory()
@@ -159,6 +168,7 @@ class NameTest extends TestCase
     /**
      * Simple first name parsing test.
      *
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @coversDefaultClass
      */
     public function testLastNameNotMandatory()
@@ -173,6 +183,7 @@ class NameTest extends TestCase
      * Exception test.
      *
      * @expectedException \ADCI\FullNameParser\Exception\FirstNameNotFoundException
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @covers \ADCI\FullNameParser\Exception\FirstNameNotFoundException
      */
     public function testFirstNameMandatory()
@@ -186,6 +197,7 @@ class NameTest extends TestCase
      * Exception test.
      *
      * @expectedException \ADCI\FullNameParser\Exception\LastNameNotFoundException
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @covers \ADCI\FullNameParser\Exception\LastNameNotFoundException
      */
     public function testLastNameMandatory()
@@ -198,6 +210,7 @@ class NameTest extends TestCase
     /**
      * Complex name parsing test.
      *
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @coversDefaultClass
      */
     public function testNameList()

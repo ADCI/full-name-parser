@@ -18,6 +18,13 @@ class Name
 {
 
     /**
+     * Full name.
+     *
+     * @var string
+     */
+    private $fullName;
+
+    /**
      * Leading initial part.
      *
      * @var string
@@ -302,6 +309,31 @@ class Name
     public function setAcademicTitle($academicTitle)
     {
         $this->academicTitle = $academicTitle;
+
+        return $this;
+    }
+
+    /**
+     * Full name getter.
+     *
+     * @return string
+     */
+    public function getFullName()
+    {
+        return $this->fullName;
+    }
+
+    /**
+     * Full name setter.
+     *
+     * @param string $full_name
+     * The full name.
+     *
+     * @return self
+     */
+    public function setFullName($full_name)
+    {
+        $this->fullName = $full_name;
 
         return $this;
     }

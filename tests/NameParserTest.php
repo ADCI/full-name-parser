@@ -28,7 +28,7 @@ class NameParserTest extends TestCase
      *
      * @var string
      */
-    const OUTPUT_STR = "failed to ensure correct %s (%s) in name %s";
+    const OUTPUT_STR = "Failed to ensure correct %s (%s) in name %s";
 
     /**
      * Lists of names.
@@ -619,6 +619,7 @@ class NameParserTest extends TestCase
     /**
      * Test FullNameParser parse.
      *
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @coversDefaultClass
      */
     public function testAdditionalNameList()
@@ -649,6 +650,7 @@ class NameParserTest extends TestCase
     /**
      * Test FullNameParser parse.
      *
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @coversDefaultClass
      */
     public function testNameList()
@@ -682,6 +684,7 @@ class NameParserTest extends TestCase
      * Test throw error by default.
      *
      * @expectedException \ADCI\FullNameParser\Exception\IncorrectInputException
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @covers \ADCI\FullNameParser\Exception\IncorrectInputException
      */
     public function testThrows()
@@ -692,6 +695,7 @@ class NameParserTest extends TestCase
     /**
      * Test not throw error by set options.
      *
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @coversNothing
      */
     public function testDoesNotThrow()
@@ -707,6 +711,7 @@ class NameParserTest extends TestCase
     /**
      * Test fix case parse.
      *
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @coversDefaultClass
      */
     public function testCaseNameList()
@@ -745,11 +750,16 @@ class NameParserTest extends TestCase
     /**
      * Test part of names parse.
      *
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @coversDefaultClass
      */
     public function testPartNameList()
     {
         foreach (self::PART_NAMES as $nameArr) {
+            $originalName = '';
+            $options = [];
+            $part = 'all';
+            $namePart = 'first';
             foreach ($nameArr as $key => $value) {
                 switch ($key) {
                     case 'original':
@@ -780,6 +790,7 @@ class NameParserTest extends TestCase
      * Not any assertion because not so easy to assert warning.
      * Simple coverage.
      *
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @coversDefaultClass
      */
     public function testManyMiddleNames()
@@ -804,6 +815,7 @@ class NameParserTest extends TestCase
      * Not any assertion because not so easy to assert warning.
      * Simple coverage.
      *
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @covers \ADCI\FullNameParser\Exception\ManyMiddleNamesException
      */
     public function testManyMiddleNamesEx()
@@ -828,6 +840,7 @@ class NameParserTest extends TestCase
      * Additional test for exception.
      *
      * @expectedException \ADCI\FullNameParser\Exception\IncorrectInputException
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @coversDefaultClass
      */
     public function testThrowsEx()
@@ -837,6 +850,7 @@ class NameParserTest extends TestCase
 
     /**
      * @expectedException \ADCI\FullNameParser\Exception\LastNameNotFoundException
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @coversDefaultClass
      */
     public function testNoLastNameDefaultException()
@@ -849,6 +863,7 @@ class NameParserTest extends TestCase
      * Additional test for exception.
      *
      * @expectedException \ADCI\FullNameParser\Exception\FirstNameNotFoundException
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
      * @coversDefaultClass
      */
     public function testNoFirstNameDefaultException()
@@ -857,4 +872,16 @@ class NameParserTest extends TestCase
         $this->parser->parse($name);
     }
 
+    /**
+     * Exception test.
+     *
+     * @expectedException \ADCI\FullNameParser\Exception\FlipStringException
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @coversDefaultClass
+     */
+    public function testFlipStringException()
+    {
+        $name = 'Jüan, Martinez, de Lorenzo y Gutierez';
+        $this->parser->parse($name);
+    }
 }

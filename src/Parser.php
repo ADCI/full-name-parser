@@ -9,9 +9,11 @@
 namespace ADCI\FullNameParser;
 
 use ADCI\FullNameParser\Exception\FirstNameNotFoundException;
+use ADCI\FullNameParser\Exception\FlipStringException;
 use ADCI\FullNameParser\Exception\IncorrectInputException;
 use ADCI\FullNameParser\Exception\LastNameNotFoundException;
 use ADCI\FullNameParser\Exception\ManyMiddleNamesException;
+use ADCI\FullNameParser\Exception\MultipleMatchesException;
 use ADCI\FullNameParser\Exception\NameParsingException;
 
 /**
@@ -273,13 +275,6 @@ class Parser
     private $name;
 
     /**
-     * Input name string.
-     *
-     * @var string
-     */
-    private $original_name;
-
-    /**
      * Name of part to return for.
      *
      * @var string
@@ -339,13 +334,13 @@ class Parser
             $this->mandatory_last_name = (boolean)$options['mandatory_last_name'];
         }
 
-        $this->setStopOnError($options['throws'] == true);
-        $this->setFixCase($options['fix_case'] == true);
-        $this->setNamePart(strtolower($options['part']));
-        $this->setSuffixes($options['suffixes']);
-        $this->setNumeralSuffixes($options['numeral_suffixes']);
-        $this->setPrefixes($options['prefixes']);
-        $this->setAcademicTitles($options['academic_titles']);
+        $this->setStopOnError($options['throws'] == true)
+            ->setFixCase($options['fix_case'] == true)
+            ->setNamePart(strtolower($options['part']))
+            ->setSuffixes($options['suffixes'])
+            ->setNumeralSuffixes($options['numeral_suffixes'])
+            ->setPrefixes($options['prefixes'])
+            ->setAcademicTitles($options['academic_titles']);
     }
 
     /**
@@ -362,22 +357,22 @@ class Parser
     {
         $this->name = new Name();
         if (is_string($name)) {
-            $name = trim($name);
             if ($this->isFixCase()) {
-                $words = explode(' ', $name);
+                $words = explode(' ', $this->normalize($name));
                 $casedName = [];
                 foreach ($words as $word) {
                     $casedName[] = $this->fixParsedNameCase($word);
                 }
-                $name = implode(' ', $casedName);
+                $this->name->setFullName(implode(' ', $casedName));
+            } else {
+                $this->name->setFullName($this->normalize($name));
             }
-            $this->original_name = $name;
+            $this->name_token = $this->name->getFullName();
+
             $suffixes = implode("|", $this->getSuffixes());
             $numeral_suffixes = implode("|", $this->getNumeralSuffixes());
             $prefixes = implode("|", $this->getPrefixes());
             $academicTitles = implode("|", $this->getAcademicTitles());
-
-            $this->name_token = $name;
 
             $this->findAcademicTitle($academicTitles);
             $this->findNicknames();
@@ -519,7 +514,7 @@ class Parser
     private function findLastName($prefixes)
     {
         $regex = sprintf(self::REGEX_LAST_NAME, $prefixes);
-        $lastName = $this->findWithRegex($regex, 0);
+        $lastName = $this->findWithRegex($regex);
         if ($lastName) {
             $this->name->setLastName($lastName);
             $this->removeTokenWithRegex($regex);
@@ -538,7 +533,7 @@ class Parser
      */
     private function findFirstName()
     {
-        $lastName = $this->findWithRegex(self::REGEX_FIRST_NAME, 0);
+        $lastName = $this->findWithRegex(self::REGEX_FIRST_NAME);
         if ($lastName) {
             $this->name->setFirstName($lastName);
             $this->removeTokenWithRegex(self::REGEX_FIRST_NAME);
@@ -574,10 +569,10 @@ class Parser
      */
     private function findMiddleName()
     {
-        $middleName = trim($this->name_token);
+        $middleName = $this->name_token;
         $count = count(explode(' ', $middleName));
         if ($count > 2) {
-            $this->handleError(new ManyMiddleNamesException('Warning: ' . $count . ' middle names'));
+            $this->handleError(new ManyMiddleNamesException($count));
         }
         if ($middleName) {
             $this->name->setMiddleName($middleName);
@@ -624,7 +619,7 @@ class Parser
         $numReplacements = 0;
         $tokenRemoved = preg_replace($regex . 'ui', $replacement, $this->name_token, -1, $numReplacements);
         if ($numReplacements > 1) {
-            $this->handleError(new NameParsingException("The regex being used has multiple matches."));
+            $this->handleError(new MultipleMatchesException());
         }
 
         $this->name_token = $this->normalize($tokenRemoved);
@@ -656,8 +651,8 @@ class Parser
         }
         // Replace two commas to one.
         $taintedString = preg_replace("(, ?, ?)", ", ", $taintedString);
-        // Remove commas and spaces from the end of string.
-        $taintedString = rtrim($taintedString, " ,");
+        // Remove commas and spaces from the string.
+        $taintedString = trim($taintedString, " ,");
 
         return $taintedString;
     }
@@ -696,8 +691,7 @@ class Parser
             $string = $substrings[1] . " " . $substrings[0];
             $string = $this->normalize($string);
         } elseif (count($substrings) > 2) {
-            $error_message = "Can't flip around multiple '$char' characters in name string '$this->original_name'.";
-            $this->handleError(new NameParsingException($error_message));
+            $this->handleError(new FlipStringException($char, $this->name->getFullName()));
         }
 
         return $string;
