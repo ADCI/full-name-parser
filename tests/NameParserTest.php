@@ -884,4 +884,17 @@ class NameParserTest extends TestCase
         $name = 'Jüan, Martinez, de Lorenzo y Gutierez';
         $this->parser->parse($name);
     }
+
+    /**
+     * Exception test.
+     *
+     * @expectedException \ADCI\FullNameParser\Exception\MultipleMatchesException
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @coversDefaultClass
+     */
+    public function testMultipleMatchesException()
+    {
+        $name = 'Jüan Martinez, Jr de Lorenzo y Gutierez, Jr';
+        $this->parser->parse($name);
+    }
 }
