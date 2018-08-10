@@ -10,8 +10,6 @@ namespace ADCI\FullNameParser\Exception;
 /**
  * Exception last name not found.
  *
- * Class LastNameNotFoundException.
- *
  * @package FullNameParser
  */
 class LastNameNotFoundException extends NameParsingException

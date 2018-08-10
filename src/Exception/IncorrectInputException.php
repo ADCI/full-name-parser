@@ -10,8 +10,6 @@ namespace ADCI\FullNameParser\Exception;
 /**
  * Exception of incorrect input.
  *
- * Class IncorrectInputException.
- *
  * @package FullNameParser
  */
 class IncorrectInputException extends NameParsingException

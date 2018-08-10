@@ -10,8 +10,6 @@ namespace ADCI\FullNameParser\Exception;
 /**
  * Any exception for name parsing.
  *
- * Class NameParsingException.
- *
  * @package FullNameParser
  */
 class NameParsingException extends \Exception

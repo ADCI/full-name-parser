@@ -7,10 +7,10 @@
 
 namespace ADCI\FullNameParser\Exception;
 
+use \Throwable;
+
 /**
  * Any exception for name parsing.
- *
- * Class NameParsingException.
  *
  * @package FullNameParser
  */
@@ -26,7 +26,7 @@ class FlipStringException extends NameParsingException
     /**
      * {@inheritdoc}
      */
-    public function __construct($char = null, $full_name = null, $message = null, $code = 0, \Throwable $previous = null)
+    public function __construct($char = null, $full_name = null, $message = null, $code = 0, Throwable $previous = null)
     {
         $message = sprintf(self::MESSAGE, $char, $full_name);
         parent::__construct($message, $code, $previous);
