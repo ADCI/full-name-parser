@@ -90,6 +90,20 @@ class NameParserTest extends TestCase
             'errors' => [],
             'fixCase' => false,
         ],
+        /* @see https://github.com/ADCI/full-name-parser/issues/10 */
+        [
+            'original' => [
+                'Dr. John P. doe-ray, Jr.',
+                'Dr. John P. DOE-RAY, Jr.',
+            ],
+            'title' => 'Dr.',
+            'first' => 'John',
+            'middle' => 'P.',
+            'last' => 'Doe-Ray',
+            'nick' => '',
+            'suffix' => 'Jr.',
+            'errors' => [],
+        ],
     ];
 
     /**

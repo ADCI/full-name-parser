@@ -432,7 +432,11 @@ class Parser
                 }
             }
             if (!$in_list) {
-                $word = ucfirst(mb_strtolower($word));
+                $hyphenated = explode('-', $word);
+                foreach ($hyphenated as $id => $part) {
+                    $hyphenated[$id] = ucfirst(mb_strtolower($part));
+                }
+                $word = implode('-', $hyphenated);
             }
         }
         return $word;
