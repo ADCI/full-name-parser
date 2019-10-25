@@ -574,10 +574,6 @@ class Parser
     private function findMiddleName()
     {
         $middleName = $this->name_token;
-        $count = count(explode(' ', $middleName));
-        if ($count > 2) {
-            $this->handleError(new ManyMiddleNamesException($count));
-        }
         if ($middleName) {
             $this->name->setMiddleName($middleName);
         }
