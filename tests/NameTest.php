@@ -180,6 +180,22 @@ class NameTest extends TestCase
     }
 
     /**
+     * Simple middle name parsing test.
+     *
+     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @coversDefaultClass
+     */
+    public function testMiddleNameNotMandatory()
+    {
+        $name = 'Dr. Hans Meiser';
+        $this->parser = new Parser(['mandatory_middle_name' => false]);
+        $nameObject = $this->parser->parse($name);
+        $this->assertEquals('Dr.', $nameObject->getAcademicTitle());
+        $this->assertEquals('Meiser', $nameObject->getLastName());
+        $this->assertEquals('Hans', $nameObject->getFirstName());
+    }
+
+    /**
      * Exception test.
      *
      * @expectedException \ADCI\FullNameParser\Exception\FirstNameNotFoundException

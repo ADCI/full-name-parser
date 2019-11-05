@@ -268,6 +268,13 @@ class Parser
     private $mandatory_last_name = true;
 
     /**
+     * Throw warning if many middle names.
+     *
+     * @var boolean
+     */
+    private $mandatory_middle_name = true;
+
+    /**
      * Object which contains parsed name parts.
      *
      * @var Name
@@ -332,6 +339,9 @@ class Parser
         }
         if (isset($options['mandatory_last_name'])) {
             $this->mandatory_last_name = (boolean)$options['mandatory_last_name'];
+        }
+        if (isset($options['mandatory_middle_name'])) {
+            $this->mandatory_middle_name = (boolean)$options['mandatory_middle_name'];
         }
 
         $this->setStopOnError($options['throws'] == true)
@@ -575,7 +585,7 @@ class Parser
     {
         $middleName = $this->name_token;
         $count = count(explode(' ', $middleName));
-        if ($count > 2) {
+        if ($this->mandatory_middle_name && $count > 2) {
             $this->handleError(new ManyMiddleNamesException($count));
         }
         if ($middleName) {

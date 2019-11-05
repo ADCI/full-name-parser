@@ -99,6 +99,11 @@ mandatory_last_name(bool|integer, optional): Throw error if last name not found.
   - 0 or false = Does not throw error.
   - 1 or true (default) = Throw error.
 
+mandatory_middle_name(bool|integer, optional): Throw error if last name not found.
+
+  - 0 or false = Does not throw warning.
+  - 1 or true (default) = Throw warning.
+
 ### Advanced Use
 
 ```php
