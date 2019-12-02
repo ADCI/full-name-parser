@@ -99,7 +99,7 @@ mandatory_last_name(bool|integer, optional): Throw error if last name not found.
   - 0 or false = Does not throw error.
   - 1 or true (default) = Throw error.
 
-mandatory_middle_name(bool|integer, optional): Throw error if last name not found.
+mandatory_middle_name(bool|integer, optional): Throw warning if a lot of middle names.
 
   - 0 or false = Does not throw warning.
   - 1 or true (default) = Throw warning.
