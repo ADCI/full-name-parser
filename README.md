@@ -1,5 +1,8 @@
 # full-name-parser
 
+[![Latest Stable Version](https://poser.pugx.org/adci/full-name-parser/v/stable)](https://github.com/ADCI/full-name-parser/releases/latest)
+[![License](https://poser.pugx.org/adci/full-name-parser/license)](https://opensource.org/licenses/MIT)
+
 ## Description
 
 FullNameParser is designed to parse large batches of full names in multiple
