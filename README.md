@@ -3,6 +3,8 @@
 [![Latest Stable Version](https://poser.pugx.org/adci/full-name-parser/v/stable)](https://github.com/ADCI/full-name-parser/releases/latest)
 [![License](https://poser.pugx.org/adci/full-name-parser/license)](https://opensource.org/licenses/MIT)
 [![Build Status](https://travis-ci.com/ADCI/full-name-parser.svg?branch=master)](https://travis-ci.com/ADCI/full-name-parser)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/bb07c274c3cba2c238d0/test_coverage)](https://codeclimate.com/github/ADCI/full-name-parser/test_coverage)
+[![Maintainability](https://api.codeclimate.com/v1/badges/bb07c274c3cba2c238d0/maintainability)](https://codeclimate.com/github/ADCI/full-name-parser/maintainability)
 
 ## Description
 
