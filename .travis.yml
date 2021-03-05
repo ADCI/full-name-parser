@@ -1,0 +1,26 @@
+# see http://about.travis-ci.org/docs/user/languages/php/ for more hints
+language: php
+
+# list any PHP version you want to test against
+php:
+  # using major version aliases
+
+  # aliased to a recent 7.x version
+  - 7.3.0
+
+sudo: false
+
+code_climate: true
+
+before_script:
+  - composer install --no-progress
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+
+script:
+  - mkdir -p build/logs
+  - vendor/bin/phpunit --configuration phpunit.xml
+
+after_success:
+  - ./cc-test-reporter after-build -r $CODECLIMATE_REPORTER_ID
