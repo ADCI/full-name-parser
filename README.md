@@ -2,6 +2,7 @@
 
 [![Latest Stable Version](https://poser.pugx.org/adci/full-name-parser/v/stable)](https://github.com/ADCI/full-name-parser/releases/latest)
 [![License](https://poser.pugx.org/adci/full-name-parser/license)](https://opensource.org/licenses/MIT)
+[![Build Status](https://travis-ci.com/ADCI/full-name-parser.svg?branch=master)](https://travis-ci.com/ADCI/full-name-parser)
 
 ## Description
 
